@@ -364,7 +364,7 @@ class Broker:
             raise BrokerException("Broker instance can't be stopped: %s" % exc)
 
         # Fire broker_shutdown event to plugins
-        await self.plugins_manager.fire_event(EVENT_BROKER_PRE_SHUTDOWN)
+        await self.plugins_manager.fire_event(EVENT_BROKER_PRE_SHUTDOWN, wait=True)
 
         await self._shutdown_broadcast_loop()
 
@@ -373,7 +373,7 @@ class Broker:
             await server.close_instance()
         self.logger.debug("Broker closing")
         self.logger.info("Broker closed")
-        await self.plugins_manager.fire_event(EVENT_BROKER_POST_SHUTDOWN)
+        await self.plugins_manager.fire_event(EVENT_BROKER_POST_SHUTDOWN, wait=True)
         self.transitions.stopping_success()
 
     async def internal_message_broadcast(self, topic, data, qos=None):
